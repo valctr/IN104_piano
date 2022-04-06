@@ -70,6 +70,7 @@ tab[i][0]=value;
 i++;
 }
 
+printf("fréquence d'échantillonage : %d\n",header.frequency);
 printf("\nnombre d'echantillons lus : %d\n",i);
 printf("nombre de valeurs sauvegardees %d\n",i);
 

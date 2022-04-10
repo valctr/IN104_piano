@@ -1,5 +1,0 @@
-GROUPE 7
-http://physique.unice.fr/sem6/2012-2013/PagesWeb/PT/Reverberation/rapports/spectrogramme.pdf
-https://zestedesavoir.com/tutoriels/3013/reconnaissance-de-notes-de-musique/
-https://devopssec.fr/article/gestion-audio-sdl
-https://www.gnu.org/software/gsl/doc/latex/gsl-ref.pdf

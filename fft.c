@@ -22,7 +22,7 @@ gsl_fft_complex_radix2_forward(data_fft, 1, 128);
 FILE *fft=fopen("data_fft.dat","w");
 for (int i = 0; i < 128; i++)
 {
-fprintf (fft,"%lf %lf\n", REAL(data_fft,i)/sqrt(128), IMAG(data_fft,i)/sqrt(128));
+fprintf (fft,"%lf %lf\n", REAL(data_fft,i), IMAG(data_fft,i));
 }
 return 0;
 }

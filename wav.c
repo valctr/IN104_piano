@@ -2,8 +2,6 @@
 #include <stdlib.h>
 #include <stdint.h>
 #include <math.h>
-#include <gsl/gsl_errno.h>
-#include <gsl/gsl_fft_complex.h>
 #include "wav.h"
 
 
@@ -45,7 +43,6 @@ printf ("\nle fichier audio contient %d echantillons\n",nbech);
 while (nbech>taille)
 {
 taille=taille*2;
-//puissance=puissance+1;
 }
 double **tab=NULL; //tableau de l'onde temporelle
 tab=malloc( (taille) * sizeof(double));
@@ -61,6 +58,7 @@ if (tab[i] == NULL)
 exit(0);
 }
 }
+
 i=0;
 short value=0;
 FILE *dat=fopen(fnameout,"w"); //fichier data des echantillons

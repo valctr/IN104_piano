@@ -7,6 +7,7 @@
 #define IMAG(z,i) ((z)[2*(i)+1])
 
 
+
 int main(){
 char fichieraudio[100];
 printf ("entrer le nom du fichier audio a analyser :\n");

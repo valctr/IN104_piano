@@ -5,7 +5,7 @@
 #include "wav.h"
 
 
-double* open_wav(char* fichieraudio, char* fnameout)
+double* open_wav(char* fichieraudio, char* fnameout, int *size)
 {
 int i=0;
 int taille=1; //variable qui correspondra par la suite a la longueur du tableau(puissance de 2)
@@ -44,6 +44,7 @@ while (nbech>taille)
 {
 taille=taille*2;
 }
+*size = taille/pow(2,9);
 double **tab=NULL; //tableau de l'onde temporelle
 tab=malloc( (taille) * sizeof(double));
 if (tab == NULL)
@@ -69,6 +70,7 @@ i++;
 }
 
 printf("fréquence d'échantillonage : %d\n",header.frequency);
+printf("taille : %d\n", taille);
 printf("\nnombre d'echantillons lus : %d\n",i);
 printf("nombre de valeurs sauvegardees %d\n",i);
 
@@ -77,7 +79,7 @@ for (int i=0;i<(taille);i++)
 fprintf(dat,"%lf %lf\n", tab[i][0], tab[i][1]);
 }
 
-double *temp=malloc(2*(taille) * sizeof(double));
+double *temp=malloc(2*(taille) * sizeof(double) );
 if (temp==NULL){
 	printf("Error when allocating memory");
 	exit(0);
@@ -88,6 +90,7 @@ for (int i=0;i<taille;i++)
 temp[2*i]=tab[i][0];
 temp[2*i+1]=tab[i][1];
 }
+temp[taille]=(double)taille;
 
 for(int i=0;i<taille;i++)
 {

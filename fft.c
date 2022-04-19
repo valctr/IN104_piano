@@ -21,12 +21,14 @@ printf("tailleres : %d\n",taille);
 
 gsl_complex_packed_array data_fft = data;
 gsl_fft_complex_radix2_forward(data_fft, 1, taille);
+printf("test: %lf\n",IMAG(data_fft,1023));
 
 FILE *fft=fopen("data_fft.dat","w");
 for (int i = 0; i < taille; i++)
 {
-fprintf (fft,"%lf %lf\n", REAL(data_fft,i), IMAG(data_fft,i));
+fprintf(fft,"%lf %lf\n", REAL(data_fft,i), IMAG(data_fft,i));
 }
+fclose(fft);
 free(data);
 free(data_fft);
 return 0;

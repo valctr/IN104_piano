@@ -1,5 +1,5 @@
-#ifndef _MON_MODULE_H
-#define _MON_MODULE_H
+#ifndef _WAV_H
+#define _WAV_H
 
 struct wavfile //définit la structure de l entete d un wave
 {

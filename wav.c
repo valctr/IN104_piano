@@ -3,9 +3,13 @@
 #include <stdint.h>
 #include <math.h>
 #include "wav.h"
+#include <gsl/gsl_errno.h>
+#include <gsl/gsl_fft_complex.h>
+#define REAL(z,i) ((z)[2*(i)])
+#define IMAG(z,i) ((z)[2*(i)+1])
 
 
-double* open_wav(char* fichieraudio, char* fnameout, int *size)
+double* open_wav(char* fichieraudio, char* fnameout, int *size, int *num_samples,int *samplingfreq)
 {
 int i=0;
 int taille=1; //variable qui correspondra par la suite a la longueur du tableau(puissance de 2)
@@ -44,7 +48,8 @@ while (nbech>taille)
 {
 taille=taille*2;
 }
-*size = taille/pow(2,9);
+*num_samples = nbech;
+*size = taille;
 double **tab=NULL; //tableau de l'onde temporelle
 tab=malloc( (taille) * sizeof(double));
 if (tab == NULL)
@@ -66,22 +71,25 @@ FILE *dat=fopen(fnameout,"w"); //fichier data des echantillons
 while( fread(&value,(header.bits_per_sample)/8,1,wav) )
 { //lecture des echantillons et enregistrement dans le tableau
 tab[i][0]=value;
+tab[i][1]=0.0;
 i++;
 }
 
+*samplingfreq = header.frequency;
 printf("fréquence d'échantillonage : %d\n",header.frequency);
 printf("taille : %d\n", taille);
 printf("\nnombre d'echantillons lus : %d\n",i);
 printf("nombre de valeurs sauvegardees %d\n",i);
 
+fprintf(dat,"taille = %d\n",taille);
 for (int i=0;i<(taille);i++)
 {
-fprintf(dat,"%lf %lf\n", tab[i][0], tab[i][1]);
+fprintf(dat,"%d : %lf %lf\n",i, tab[i][0], tab[i][1]);
 }
 
 double *temp=malloc(2*(taille) * sizeof(double) );
 if (temp==NULL){
-	printf("Error when allocating memory");
+	printf("Error when allocating memory\n");
 	exit(0);
 }
 

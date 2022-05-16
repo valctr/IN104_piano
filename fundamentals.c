@@ -43,9 +43,9 @@ void removefreq(double *modules,int f, double df, int frame_length, bool remove_
 	int min, max;
 	if (remove_harmonics){
 		int i=1;
+		min = (int)(f*(1-alpha))/df;
+		max = (int)(f*(1+alpha))/df;
 		while (i*f<frame_length){
-			min = (int)(i*f*(1-alpha))/df;
-			max = (int)(i*f*(1+alpha))/df;
 			if (max>frame_length-1) max = frame_length-1;
 			for (int j=min;j<max+1;j++) modules[j]=0.0;
 			i++;
@@ -89,10 +89,9 @@ int** fundamentals(double **frames, int num_frames, int frame_length,int harmoni
 		if (frames[i]!=NULL){
 			double *modules=malloc(sizeof(double)*frame_length/2);
 			for (int k=0; k<frame_length/2; k++) modules[k] = square_module(frames[i],k);
-
 			int j=1;
 			f = argmax(modules,frame_length/2,harmonic_nb,samplingfreq,&max_amp,df);
-			double min = max_amp-2.0;
+			double min = max_amp-3.0;
 
 			while ((max_amp>min) && (f>20) && (f<4500) && (j<89) && (modules[(int)(f/df)]>0.1)){
 				if ((f>20) && (f<4500) && (max_amp>min)) {
@@ -111,26 +110,39 @@ int** fundamentals(double **frames, int num_frames, int frame_length,int harmoni
 	}
 
 	
-	/*for (int i=0;i<num_frames;i++){
-		if ((frames_fundamentals[i]!=NULL)&&(frames_fundamentals[i][0]>0)){
-			int length = frames_fundamentals[i][0];
-			for (int j=1;j<length;j++){
+	for (int i=0;i<num_frames;i++){
+		if ((frames_fundamentals[i]!=NULL)&&(frames_fundamentals[i][0]>1)){
+			int length = frames_fundamentals[i][0]-1;
+			int tmp[88];
+			int count=0;
+			int length_tmp = length-count;
+			for (int j=0;j<length;j++) {
+				tmp[j]=frames_fundamentals[i][j+2];
+			}
+
+			for (int j=0;j<length;j++){
 				bool c = false;
-				int f=frames_fundamentals[i][j];
+				int f=frames_fundamentals[i][j+2];
+				length_tmp = length-count;
 				if (i>0){ 
-					if (frames_fundamentals[i-1]!=NULL) c = element_found(f,frames_fundamentals,i,j,-1,alpha);
+					if (frames_fundamentals[i-1]!=NULL) c = element_found(f,frames_fundamentals,i,j+2,-1,alpha);
 				}
-				if (j<num_frames-1){ 
-					if (frames_fundamentals[j+1]!=NULL) c = element_found(f,frames_fundamentals,i,j,1,alpha);
+				if (i<num_frames-1){ 
+					if (frames_fundamentals[i+1]!=NULL) c = element_found(f,frames_fundamentals,i,j+2,1,alpha);
 				}
 				if (!c) {
-					for (int k=j; k<length-1;k++) frames_fundamentals[i][k] = frames_fundamentals[i][k+1];
+					for (int k=j; k<length_tmp-1;k++) {
+						tmp[k]=tmp[k+1];
+					}
 					frames_fundamentals[i][0]-=1;
-					length-=1;
+					count+=1;
 				}
 			}
+			if (length_tmp>0){
+				for (int j=0;j<length_tmp;j++) frames_fundamentals[i][j+2]=tmp[j];
+			}
 		}
-	}*/
+	}
 
 	return(frames_fundamentals);
 }

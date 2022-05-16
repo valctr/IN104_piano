@@ -42,7 +42,7 @@ int **frames_fundamentals = fundamentals(frames_fft,num_frames,FFT_SIZE,2, sampl
 FILE *fft=fopen("fun.dat","wb");
 	for (int i=0;i<num_frames;i++)
 	{
-		fprintf(fft,"%d : ",i);
+		fprintf(fft,"%d %fs : ",i,i*(double)(frame_step)/samplingfreq);
 		if ((frames_fundamentals[i]!=NULL)&&(frames_fundamentals[i][0]>0)){
 			for (int j = 1; j < frames_fundamentals[i][0]+1; ++j)
 			{

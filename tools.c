@@ -43,11 +43,12 @@ double square_module(double *data, int ind){
 bool element_found(int elem,int **frames,int ind1,int ind2,int dir, double alpha){
 	int k = ind1+dir;
 	int length = frames[k][0];
-	for (int i=0;i<length;i++){
+	for (int i=1;i<length+1;i++){
 		if (abs(elem-frames[k][i])<(int)(alpha*elem)) return(true);
 	}
 	return(false);
 }
+
 
 void printtextdouble(char* fname, double *frame, int frame_length){
 	FILE *fft=fopen(fname,"wb"); 

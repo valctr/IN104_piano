@@ -50,28 +50,23 @@ taille=taille*2;
 }
 *num_samples = nbech;
 *size = taille;
-double **tab=NULL; //tableau de l'onde temporelle
-tab=malloc( (taille) * sizeof(double));
-if (tab == NULL)
-{
-exit(0);
+
+double *tab=malloc(2*(taille) * sizeof(double) );
+if (tab==NULL){
+	printf("Error when allocating memory\n");
+	exit(0);
 }
-for(int i=0;i<(taille);i++)
-{
-tab[i]=malloc( 2 * sizeof(double));
-if (tab[i] == NULL)
-{
-exit(0);
-}
-}
+
+tab[taille]=(double)taille;
+
 
 i=0;
 short value=0;
 FILE *dat=fopen(fnameout,"w"); //fichier data des echantillons
 while( fread(&value,(header.bits_per_sample)/8,1,wav) )
 { //lecture des echantillons et enregistrement dans le tableau
-tab[i][0]=value;
-tab[i][1]=0.0;
+REAL(tab,i)=value;
+IMAG(tab,i)=0.0;
 i++;
 }
 
@@ -84,31 +79,12 @@ printf("nombre de valeurs sauvegardees %d\n",i);
 fprintf(dat,"taille = %d\n",taille);
 for (int i=0;i<(taille);i++)
 {
-fprintf(dat,"%d : %lf %lf\n",i, tab[i][0], tab[i][1]);
+fprintf(dat,"%d : %lf %lf\n",i, REAL(tab,i), REAL(tab,i));
 }
 
-double *temp=malloc(2*(taille) * sizeof(double) );
-if (temp==NULL){
-	printf("Error when allocating memory\n");
-	exit(0);
-}
 
-for (int i=0;i<taille;i++)
-{
-temp[2*i]=tab[i][0];
-temp[2*i+1]=tab[i][1];
-}
-temp[taille]=(double)taille;
-
-for(int i=0;i<taille;i++)
-{
-free(tab[i]);
-tab[i] = NULL ;
-}
-
-free(tab);
 fclose(wav);
 fclose(dat);
 
-return(temp);
+return(tab);
 }

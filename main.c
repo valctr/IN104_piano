@@ -37,7 +37,35 @@ double **frames_window = window(frames_data,num_frames,frame_length);
 
 double **frames_fft = fft(frames_window,num_frames,frame_length,FFT_SIZE);
 
+/*char buf3[14];
+for (int i = 0; i < num_frames; ++i)
+{
+	if(frames_fft[i]!=NULL){
+		snprintf(buf3, 14, "%dfft.dat", i);
+		printtextdouble(buf3,frames_fft[i],FFT_SIZE);
+	}
+}
+
+
+char buf4[14];
+for (int i=0; i<num_frames; i++) {
+	if (frames_fft[i]!=NULL){
+		double modules[FFT_SIZE];
+		for (int j=0;j<FFT_SIZE;j++){
+			modules[j] = square_module(frames_fft[i],j);
+		}
+		snprintf(buf4, 14, "%dmod.dat", i);
+		FILE *fft=fopen(buf4,"wb"); 
+		for (int k = 0; k < FFT_SIZE; k++)
+		{
+			fprintf (fft,"%lf\n", modules[k]);
+		}
+		fclose(fft);
+	}
+}*/
+
 int **frames_fundamentals = fundamentals(frames_fft,num_frames,FFT_SIZE,2, samplingfreq,ALPHA);
+correct(frames_fundamentals,num_frames,frame_length, ALPHA);
 
 FILE *fft=fopen("fun.dat","wb");
 	for (int i=0;i<num_frames;i++)

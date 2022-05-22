@@ -18,11 +18,6 @@ printf ("nom du fichier : %s\n", fichieraudio);
 int length;
 double *data = open_wav(fichieraudio,"data.dat", &length);
 
-/*double tmp[length]; 
-for (int i=0;i<length;i++) {
-	REAL(tmp,i) = REAL(data,i);
-	IMAG(tmp,i) = IMAG(data,j);
-}*/
 gsl_complex_packed_array data_fft = data;
 gsl_fft_complex_radix2_forward(data_fft, 1, FFT_SIZE); //calcul de la fft
 

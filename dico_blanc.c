@@ -1,6 +1,10 @@
+//----------- Dictionnaire des numéros des touches blanches --------------//
+
 #include <stdio.h>
 #include <math.h>
 #include <stdlib.h>
+
+// Fonction renvoyant un tableau contenant les numéros des touches blanches
 
 int* dico_blanc(int N_keys) {
 

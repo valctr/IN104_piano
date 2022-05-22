@@ -10,6 +10,8 @@
 #include "dico_blanc.h"
 #include "find_dicho.c"
 #include "find_dicho.h"
+#include "main.c"
+#include "main.h"
 
 #define SCREENWIDTH 990
 #define SCREENHEIGHT 800
@@ -20,13 +22,14 @@ void SDL_ExitWithError2(const char* message, SDL_Window* window);
 void SDL_ExitWithError3(const char* message, SDL_Window* window, SDL_Renderer* renderer);
 
 
-    
+
 int  main() {
+
+//----------- Gestion de l'affichage du clavier --------------//
 
     SDL_Window* window = NULL;
     SDL_Renderer* renderer = NULL;
-    
-    
+      
 //Lancement SDL
     if (SDL_Init(SDL_INIT_VIDEO) != 0) 
         SDL_ExitWithError1("Erreur lancement SDL");  
@@ -42,14 +45,9 @@ int  main() {
     renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_SOFTWARE);
     if (renderer == NULL) 
         SDL_ExitWithError2("Echec rendu", window);
-    
-    
-    
-    
+       
     int i; 
-    SDL_Rect rectangle;
-
-    
+    SDL_Rect rectangle;    
     
     // Touches Blanches
     
@@ -70,11 +68,9 @@ int  main() {
         
     
         if (SDL_RenderFillRect(renderer, &rectangle) != 0) 
-            SDL_ExitWithError3("Dessin rectangle impossible", window, renderer);
-        
+            SDL_ExitWithError3("Dessin rectangle impossible", window, renderer);     
     }
-    
-    
+      
     // Touches Noires
     
     int w_keyp = 12;
@@ -137,10 +133,8 @@ int  main() {
         if (SDL_RenderFillRect(renderer, &rectangle) != 0) 
             SDL_ExitWithError3("Dessin rectangle impossible", window, renderer);
         
-        i = i + 7;
-        
+        i = i + 7;    
     }
-    
     
     // Liseret Blanc
      
@@ -171,32 +165,32 @@ int  main() {
       
 
 
+//----------- Coloration de la touche jouée --------------//
 
-
-    // Coloration de la touche jouée
 
     if (SDL_SetRenderDrawColor(renderer, 255, 0, 0, SDL_ALPHA_OPAQUE) != 0) {
         SDL_ExitWithError3("Chargement couleur rendu impossible", window, renderer);}
 
-    float f=440;
-    int numero_de_touche = num_touche(f);
+    float f=main1();
+
+    unsigned int numero_de_touche = num_touche(f);
     //printf("%d\n",numero_de_touche);
+    if (numero_de_touche==-1) { printf("Cette note ne peut pas être jouée par un piano !\n"); exit(EXIT_FAILURE);}
 
     float* tab_clavier = dico_freq_pos(N_keys, w_key, h_key); // liste des abscisses
 
 
     rectangle.x = tab_clavier[numero_de_touche*2+1]; // abscisse de la touche
-    printf("%d\n" , rectangle.x);
+    //printf("%d\n" , rectangle.x);
 
     // Liste des abscisses blancs
 
     int* tab_blanc=dico_blanc(N_keys);
-    printf("%s\n", "cc2");
 
-    // On teste si la touche est noire ou blanche
+
+    // On teste si la touche est noire ou blanche et on dessine le rectangle en conséquence
 
     if (find_dicho (tab_blanc,  numero_de_touche, 0, N_keys)) {
-        printf("%s\n", "cc3");
         rectangle.y = 450;
         rectangle.w = w_key;
         rectangle.h = h_key;
@@ -204,10 +198,9 @@ int  main() {
             SDL_ExitWithError3("Dessin rectangle impossible", window, renderer);
 
         }
-        printf("%s\n", "cc4");
+
     }
     else {
-            printf("%s\n", "cc5");
         rectangle.y = 450;
         rectangle.w = w_keyp;
         rectangle.h = h_keyp;
@@ -216,17 +209,12 @@ int  main() {
         }
     }
 
-
-
-    /* Temps d'affichage */ 
+    //Temps d'affichage
 
     SDL_RenderPresent(renderer);
-    printf("%s\n", "cc6");
+    SDL_Delay(8000);
 
-    SDL_Delay(5000);
-    printf("%s\n", "cc7");
-
-    /* Libérations */
+    // Libérations
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
     SDL_Quit();  
@@ -234,7 +222,7 @@ int  main() {
 }
 
 
-/* Fonction annexes */
+//----------- Fonctions secondaires --------------//
 
 
 void SDL_ExitWithError1(const char* message) {

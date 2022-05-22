@@ -1,4 +1,5 @@
 /*
+//----------- Recherche séquentielle (ne sert plus à rien) --------------//
 
 #include <stdio.h>
 #include <math.h>
@@ -13,18 +14,17 @@ bool find_word_naive (float* tab, float value, int size_tab) {
   }
     return 0;
 
-
 }
 
 */
-// --------------------------------------------- //
+
+//----------- Recherche par dichotomie --------------//
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <stdbool.h>
-//#include "dico_blanc.c"
-//#include "dico_blanc.h"
+
 
 
 

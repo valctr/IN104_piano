@@ -11,7 +11,7 @@
 #define WIN_LEN 0.25
 #define WIN_HOP 0.1
 #define ALPHA 0.025
-#define NB_HARMONICS 2
+#define NB_HARMONICS 3
 
 
 int main(){

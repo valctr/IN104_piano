@@ -2,7 +2,9 @@
 #include <math.h>
 #include <stdlib.h>
 
- 
+//----------- Fonction de tri --------------//
+
+
 void fct_tricroitableau(float tableau[], int tailletableau)
 {
      float valeurtemporaire;
@@ -18,10 +20,10 @@ void fct_tricroitableau(float tableau[], int tailletableau)
                 tableau[j] = valeurtemporaire;
             }
         }
- 
      }
-
 }
+
+//----------- Dictionnaire des fréquences et des abscisses --------------//
 
 float* dico_freq_pos(int N_keys, int w_key, int h_key) {
 
@@ -65,21 +67,13 @@ float* dico_freq_pos(int N_keys, int w_key, int h_key) {
             abscisse_sans0 [k]=abscisse[i] ; 
             //printf("%f\n", abscisse_sans0[k]);
              ++k;
-        }
-
-       
-
+        }   
     }
     
     fct_tricroitableau(abscisse_sans0, 88); // on trie le tableau
     for(int i=0 ; i<88 ; ++i) {
        //printf("%f \n" , abscisse_sans0[i]);
     }
-
-
-    
-    
-
 
     // on insère les positions dans le dico, aux cases correspondant au fréquences
 
@@ -88,7 +82,9 @@ float* dico_freq_pos(int N_keys, int w_key, int h_key) {
         dico[2*i+1] = abscisse_sans0[i];
         //printf("%f \n , %f \n", dico[2*i], dico[2*i+1]);
         }
-    
+    free(abscisse);
+    free(abscisse_sans0);
+    free(dico);
     return dico;
 }
 /*

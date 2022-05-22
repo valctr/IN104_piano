@@ -11,12 +11,17 @@
 #define WIN_LEN 0.25
 #define WIN_HOP 0.1
 #define ALPHA 0.025
+#define NB_HARMONICS 2
 
 
 int main(){
+
+/*Récupération du nom du fichier traité*/
 char fichieraudio[100];
 printf("Entrez le nom du fichier (fichier wav mono) : ");
 scanf("%s", fichieraudio);
+
+/*Récupération du nom de la fenêtre à utiliser*/
 char window_name[100];
 printf("Entrez la fenêtre à utiliser (hann ou hamming) : ");
 scanf("%s", window_name);
@@ -29,11 +34,11 @@ int taille=0;
 int num_samples=0;
 int samplingfreq, num_frames,frame_length,frame_step;
 
+/*Ouverture du fichier wav et création d'un tableau contenant les données*/
 double *data = open_wav(fichieraudio,"data.dat",&taille,&num_samples,&samplingfreq);
 
-printf("fft size %d\n",FFT_SIZE);
-
-double **frames_data = framing(data,samplingfreq,WIN_LEN,WIN_HOP,taille,&frame_length,&num_frames,&frame_step);
+/*Découpage du signal en image*/
+double **frames_data = framing(data,samplingfreq,WIN_LEN,WIN_HOP,taille,&frame_length,&num_frames,&frame_step,FFT_SIZE);
 if ((int) frame_length<FFT_SIZE) {
 	printf("\nErreur : frame_length doit être supérieur à fft_size -> diminuer fft_size ou augmenter WIN_LEN");
 	exit(EXIT_FAILURE);
@@ -41,15 +46,20 @@ if ((int) frame_length<FFT_SIZE) {
 
 num_frames =(int) (num_samples/frame_step);
 
-double **frames_window = window(frames_data,num_frames,frame_length,"hann");
+/*Application du fenêtrage*/
+double **frames_window = window(frames_data,num_frames,frame_length,window_name);
 
+/*Calcul de la FFT*/
 double **frames_fft = fft(frames_window,num_frames,frame_length,FFT_SIZE);
 
-int **frames_fundamentals = fundamentals(frames_fft,num_frames,FFT_SIZE,2, samplingfreq,ALPHA);
+/*Calcul des fréquences des notes jouées*/
+int **frames_fundamentals = fundamentals(frames_fft,num_frames,FFT_SIZE,NB_HARMONICS, samplingfreq,ALPHA);
 
+/*Correction du tableau*/
 correct(frames_fundamentals,num_frames,frame_length, ALPHA);
 
-FILE *fft=fopen("fun.dat","wb");
+/*On écrit le résultat dans un fichier nommé fundamentals.dat*/
+FILE *fft=fopen("fundamentals.dat","wb");
 for (int i=0;i<num_frames;i++)
 {
 	fprintf(fft,"%d %fs : ",i,i*(double)(frame_step)/samplingfreq);
@@ -64,6 +74,7 @@ for (int i=0;i<num_frames;i++)
 }
 fclose(fft);
 
+/*On libère la mémoire allouée*/
 for (int i = 0; i < num_frames; ++i)
 {
 	free(frames_data[i]);

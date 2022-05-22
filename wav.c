@@ -51,6 +51,7 @@ taille=taille*2;
 *num_samples = nbech;
 *size = taille;
 
+//On crée un tableau dynamique contenant les données du signal
 double *tab=malloc(2*(taille) * sizeof(double) );
 if (tab==NULL){
 	printf("Error when allocating memory\n");
@@ -62,7 +63,6 @@ tab[taille]=(double)taille;
 
 i=0;
 short value=0;
-FILE *dat=fopen(fnameout,"w"); //fichier data des echantillons
 while( fread(&value,(header.bits_per_sample)/8,1,wav) )
 { //lecture des echantillons et enregistrement dans le tableau
 REAL(tab,i)=value;
@@ -72,19 +72,10 @@ i++;
 
 *samplingfreq = header.frequency;
 printf("fréquence d'échantillonage : %d\n",header.frequency);
-printf("taille : %d\n", taille);
 printf("\nnombre d'echantillons lus : %d\n",i);
 printf("nombre de valeurs sauvegardees %d\n",i);
 
-fprintf(dat,"taille = %d\n",taille);
-for (int i=0;i<(taille);i++)
-{
-fprintf(dat,"%d : %lf %lf\n",i, REAL(tab,i), REAL(tab,i));
-}
-
-
 fclose(wav);
-fclose(dat);
 
 return(tab);
 }

@@ -6,6 +6,7 @@
 #define REAL(z,i) ((z)[2*(i)])
 #define IMAG(z,i) ((z)[2*(i)+1])
 
+/*Création de tableau dynamique de taille num_frames x (2 x frame_length) et allocation de mémoire*/
 double** create_frames_tab(int num_frames,int frame_length){
 
 	double **frames = malloc(sizeof(double*)*num_frames);
@@ -28,6 +29,7 @@ double** create_frames_tab(int num_frames,int frame_length){
 	return(frames);
 }
 
+/*Test pour déterminer si une image n'est composée que de zéros*/
 bool test_zero(double *frame, int frame_length){
 	for (int i = 0; i < frame_length; ++i)
 	{
@@ -36,10 +38,12 @@ bool test_zero(double *frame, int frame_length){
 	return(false);
 }
 
+/*Calcul du module au carrée*/
 double square_module(double *data, int ind){
 	return pow(REAL(data,ind),2) + pow(IMAG(data,ind),2);;
 }
 
+/*Test pour déterminer si l'on retrouve un élément désignée dans son voisinage (dans les images jouxtant celle actuelle)*/
 bool element_found(int elem,int **frames,int ind1,int ind2,int dir, double alpha){
 	int k = ind1+dir;
 	int length = frames[k][0];
@@ -49,6 +53,7 @@ bool element_found(int elem,int **frames,int ind1,int ind2,int dir, double alpha
 	return(false);
 }
 
+/*Fonctions permettant de créer des fichiers .dat contenant les données de l'image demandée*/
 
 void printtextdouble(char* fname, double *frame, int frame_length){
 	FILE *fft=fopen(fname,"wb"); 

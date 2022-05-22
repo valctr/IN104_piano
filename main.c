@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include "wav.h"
 #include "tools.h"
 #include "window.h"
@@ -7,15 +8,22 @@
 #include "fundamentals.h"
 #include "fft.h"
 #define FFT_SIZE 8192
-#define WIN_LEN 0.2
-#define WIN_HOP 0.05
+#define WIN_LEN 0.25
+#define WIN_HOP 0.1
 #define ALPHA 0.025
 
 
 int main(){
 char fichieraudio[100];
-printf("Entrez le nom du fichier : ");
+printf("Entrez le nom du fichier (fichier wav mono) : ");
 scanf("%s", fichieraudio);
+char window_name[100];
+printf("Entrez la fenêtre à utiliser (hann ou hamming) : ");
+scanf("%s", window_name);
+if ((!strcmp(window_name,"hann")) && (!strcmp(window_name,"hamming"))){
+	printf("Erreur : fenêtre inexistante. Veuillez choisir hann ou hamming");
+	exit(EXIT_FAILURE);
+}
 
 int taille=0;
 int num_samples=0;
@@ -33,54 +41,28 @@ if ((int) frame_length<FFT_SIZE) {
 
 num_frames =(int) (num_samples/frame_step);
 
-double **frames_window = window(frames_data,num_frames,frame_length);
+double **frames_window = window(frames_data,num_frames,frame_length,"hann");
 
 double **frames_fft = fft(frames_window,num_frames,frame_length,FFT_SIZE);
 
-/*char buf3[14];
-for (int i = 0; i < num_frames; ++i)
-{
-	if(frames_fft[i]!=NULL){
-		snprintf(buf3, 14, "%dfft.dat", i);
-		printtextdouble(buf3,frames_fft[i],FFT_SIZE);
-	}
-}
-
-
-char buf4[14];
-for (int i=0; i<num_frames; i++) {
-	if (frames_fft[i]!=NULL){
-		double modules[FFT_SIZE];
-		for (int j=0;j<FFT_SIZE;j++){
-			modules[j] = square_module(frames_fft[i],j);
-		}
-		snprintf(buf4, 14, "%dmod.dat", i);
-		FILE *fft=fopen(buf4,"wb"); 
-		for (int k = 0; k < FFT_SIZE; k++)
-		{
-			fprintf (fft,"%lf\n", modules[k]);
-		}
-		fclose(fft);
-	}
-}*/
-
 int **frames_fundamentals = fundamentals(frames_fft,num_frames,FFT_SIZE,2, samplingfreq,ALPHA);
+
 correct(frames_fundamentals,num_frames,frame_length, ALPHA);
 
 FILE *fft=fopen("fun.dat","wb");
-	for (int i=0;i<num_frames;i++)
-	{
-		fprintf(fft,"%d %fs : ",i,i*(double)(frame_step)/samplingfreq);
-		if ((frames_fundamentals[i]!=NULL)&&(frames_fundamentals[i][0]>0)){
-			for (int j = 1; j < frames_fundamentals[i][0]+1; ++j)
-			{
-				fprintf (fft,"%d ", frames_fundamentals[i][j]);
-			}
+for (int i=0;i<num_frames;i++)
+{
+	fprintf(fft,"%d %fs : ",i,i*(double)(frame_step)/samplingfreq);
+	if ((frames_fundamentals[i]!=NULL)&&(frames_fundamentals[i][0]>0)){
+		for (int j = 1; j < frames_fundamentals[i][0]+1; ++j)
+		{
+			fprintf (fft,"%d ", frames_fundamentals[i][j]);
 		}
-		fprintf(fft,"\n");
 	}
+	else fprintf(fft,"No notes");
+	fprintf(fft,"\n");
+}
 fclose(fft);
-
 
 for (int i = 0; i < num_frames; ++i)
 {

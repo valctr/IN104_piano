@@ -80,23 +80,23 @@ int** fundamentals(double **frames, int num_frames, int frame_length,int harmoni
 		int f;
 		double max_amp;
 
-		double df = (double)samplingfreq/frame_length;
+		double df = ((double)samplingfreq)/((double)frame_length);
 
 		if (frames[i]!=NULL){
-			double *modules=malloc(sizeof(double)*frame_length/2);
-			for (int k=0; k<frame_length/2; k++) modules[k] = square_module(frames[i],k);
+			double *modules=malloc(sizeof(double)*frame_length);
+			for (int k=0; k<frame_length; k++) modules[k] = square_module(frames[i],k);
 			int j=1;
-			f = argmax(modules,frame_length/2,harmonic_nb,samplingfreq,&max_amp,df);
+			f = argmax(modules,frame_length,harmonic_nb,samplingfreq,&max_amp,df);
 			double min = max_amp-3.0;
 
 			while ((max_amp>min) && (f>20) && (f<4500) && (j<89) && (modules[(int)(f/df)]>0.1)){
 				if ((f>20) && (f<4500) && (max_amp>min)) {
 					frames_fundamentals[i][j] = f;
-					removefreq(modules,f,df,frame_length/2,1,alpha);
+					removefreq(modules,f,df,frame_length,1,alpha);
 					j++;
 				}
-				else removefreq(modules,f,df,frame_length/2,0,alpha);
-				f = argmax(modules,frame_length/2,harmonic_nb,samplingfreq,&max_amp,df);
+				else removefreq(modules,f,df,frame_length,0,alpha);
+				f = argmax(modules,frame_length,harmonic_nb,samplingfreq,&max_amp,df);
 			}
 			frames_fundamentals[i][0]=j-1;
 			free(modules);
